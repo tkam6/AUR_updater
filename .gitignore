@@ -1,0 +1,17 @@
+# General
+**/__pycache__/
+**/*.pyc
+**/*.egg-info/
+**/.mypy_cache/
+**/.ruff_cache/
+
+# Development
+dev/cache_pyc_rmer.py
+
+# Project root
+build/
+nuitka-crash-report.xml
+push.sh
+releases/
+tmp/
+.venv/
