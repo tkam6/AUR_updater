@@ -101,7 +101,7 @@ def run_get_both(
 
 
 def ask(prompt: str, default: bool = True) -> tuple[bool | None, str]:
-    print(prompt, end=" ([y]/n): ")
+    print(f"> {prompt}", end=" ([y]/n): ")
     choice = input()
     if choice == "":
         return default, choice
@@ -229,7 +229,7 @@ def pulled_but_not_updated(pkg_name: str, item_path: str) -> None:
         error("skipping (declined)", pkg_name)
         return
 
-    sp.run(["makepkg", "-sic"], cwd=item_path, check=False)
+    sp.run(["PACMAN_AUTH=sudo", "makepkg", "-sic"], cwd=item_path, check=False)
 
 
 def main() -> None:
@@ -250,6 +250,9 @@ def main() -> None:
     # debug("internet connection available")
 
     # print("BEHOLD! THE GREATEST SCRIPT TO EVER GRACE THIS PLANET IS HERE!")
+
+    # cache sudo
+    run_get_none(["sudo", "-v"])
 
     pull_dirs = []
     for item in os.scandir(os.path.expanduser("~/AUR/")):
@@ -328,7 +331,7 @@ def main() -> None:
 
         sp.run(["git", "reset", "--hard", "@{u}"], cwd=item_path, check=False)
         sp.run(["git", "clean", "-fd"], cwd=item_path, check=False)
-        sp.run(["makepkg", "-sic"], cwd=item_path, check=False)
+        sp.run(["PACMAN_AUTH=sudo", "makepkg", "-sic"], cwd=item_path, check=False)
 
 
 if __name__ == "__main__":
