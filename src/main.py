@@ -146,9 +146,10 @@ def error(msg: str, pkg_name: str | None = None, start: str = "", end: str = "\n
         )
 
 
-def info(msg: str, pkg_name: str | None = None, start: str = "", end: str = "\n") -> None:
+def info(msg: str, pkg_name: str | None = None, max_len: int = 0, start: str = "", end: str = "\n") -> None:
+    tmp = "" if pkg_name is None else f"{f" {pkg_name}:":<{max_len + 2}}"
     print(
-        f"{start}{ANSI_BOLD}I:{ANSI_RESET}{"" if pkg_name is None else f" {pkg_name}:"} {msg}",
+        f"{start}{ANSI_BOLD}I:{ANSI_RESET}{tmp} {msg}",
         end=end,
     )
 
@@ -250,7 +251,15 @@ def main() -> None:
 
     # print("BEHOLD! THE GREATEST SCRIPT TO EVER GRACE THIS PLANET IS HERE!")
 
+    pull_dirs = []
     for item in os.scandir(os.path.expanduser("~/AUR/")):
+        if not item.is_dir():
+            continue
+        pull_dirs.append(item)
+    names = [i.name for i in pull_dirs]
+    max_len = len(max(names, key=len)) if names else 0
+
+    for item in pull_dirs:
         if not item.is_dir():
             continue
         pkg_name = item.name
@@ -295,7 +304,7 @@ def main() -> None:
             debug(f"version string from makepkg: {ver_from_makepkg}", pkg_name)
 
             if installed_ver == ver_from_makepkg:
-                info("skipping (up-to-date)", pkg_name)
+                info("skipping (up-to-date)", pkg_name, max_len=max_len)
                 continue
 
             pulled_but_not_updated(pkg_name, item_path)
